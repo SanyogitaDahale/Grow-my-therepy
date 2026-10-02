@@ -1,0 +1,255 @@
+@import "tailwindcss";
+
+/*
+ * Semantic color tokens. Each site theme sets these variables on a
+ * [data-theme] wrapper, and Tailwind utilities (bg-canvas, text-ink, ...)
+ * read them, so components never reference raw hex values.
+ */
+[data-theme="original"] {
+  --canvas: #f6f4ee;
+  --surface: #ffffff;
+  --sand: #e3d9ca;
+  --ink: #2b2b2b;
+  --ink-soft: #2b2b2b;
+  --accent: #86b3b3;
+  --accent-strong: #6a9595;
+  --line: #e4e2dc;
+  --band: #86b3b3;
+  --on-band: #ffffff;
+  --overlay: rgb(43 43 43 / 0.54);
+  --on-dark: #f6f4ee;
+  --oval-hover-bg: #2b2b2b;
+  --oval-hover-fg: #f6f4ee;
+  --link-hover: #2b2b2b;
+  /* Soft, airy grade: lifted shadows, muted color. */
+  --photo-filter: contrast(0.85) saturate(1.10) brightness(1.06);
+}
+
+/* Coastal Sage: sage primary, warm sand secondary, terracotta clay accent. */
+[data-theme="maya"] {
+  --canvas: #f5f0e8;
+  --surface: #fdfbf7;
+  --sand: #e0e4d6;
+  --ink: #2e3830;
+  --ink-soft: #46504a;
+  --accent: #9a553a;
+  --accent-strong: #7a412b;
+  --line: #ddd8cc;
+  --band: #4f5d4a;
+  --on-band: #f5f0e8;
+  --overlay: rgb(38 48 40 / 0.5);
+  --on-dark: #f8f4ec;
+  --oval-hover-bg: #9a553a;
+  --oval-hover-fg: #fdfbf7;
+  --link-hover: #9a553a;
+  --photo-filter: none;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-sand: var(--sand);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-line: var(--line);
+  --color-band: var(--band);
+  --color-on-band: var(--on-band);
+  --color-on-dark: var(--on-dark);
+  --color-overlay: var(--overlay);
+  --color-oval-hover-bg: var(--oval-hover-bg);
+  --color-oval-hover-fg: var(--oval-hover-fg);
+  --color-link-hover: var(--link-hover);
+
+  --font-sans: var(--font-mulish), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+  --font-script: var(--font-windsong), cursive;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/*
+ * Fluid grid that mirrors the source template's layout engine:
+ * mobile = 8 content columns inside 6vw gutters, desktop (>=768px) = 24
+ * content columns inside 5vw gutters. Row height scales with viewport width.
+ * Blocks are placed with --m / --d grid-area values.
+ */
+@layer components {
+  .fluid-grid {
+    --col-gap: 11px;
+    display: grid;
+    column-gap: var(--col-gap);
+    row-gap: 11px;
+    grid-template-columns:
+      minmax(0, calc(6vw - var(--col-gap)))
+      repeat(8, minmax(0, 1fr))
+      minmax(0, calc(6vw - var(--col-gap)));
+    grid-template-rows: repeat(var(--rows-m, 1), minmax(24px, auto));
+  }
+
+  .fluid-grid[data-gap="wide"] {
+    --col-gap: 20px;
+  }
+
+  .fluid-grid > .fluid-block {
+    grid-area: var(--m);
+    min-width: 0;
+  }
+
+  @media (min-width: 768px) {
+    .fluid-grid {
+      grid-template-columns:
+        minmax(0, calc(5vw - var(--col-gap)))
+        repeat(24, minmax(0, 1fr))
+        minmax(0, calc(5vw - var(--col-gap)));
+      grid-template-rows: repeat(var(--rows-d, 1), minmax(1.935vw, auto));
+    }
+
+    .fluid-grid > .fluid-block {
+      grid-area: var(--d);
+    }
+  }
+
+  /* Type scale (sizes measured from the source template at 390/820/1440px). */
+  .type-h1 {
+    font-family: var(--font-serif);
+    font-weight: 340;
+    font-variation-settings: "opsz" 60;
+    font-size: clamp(34px, 11vw, 46px);
+    line-height: 1.254;
+    letter-spacing: -0.012em;
+  }
+
+  .type-h2 {
+    font-family: var(--font-serif);
+    font-weight: 340;
+    font-variation-settings: "opsz" 60;
+    font-size: clamp(28px, 9.1vw, 38px);
+    line-height: 1.294;
+    letter-spacing: -0.012em;
+  }
+
+  /* Smaller section titles ("Our areas of expertise", "Our specialties"). */
+  .type-h2-sm {
+    font-family: var(--font-serif);
+    font-weight: 340;
+    font-variation-settings: "opsz" 60;
+    font-size: clamp(24px, 7.5vw, 32px);
+    line-height: 1.294;
+    letter-spacing: -0.012em;
+  }
+
+  .type-h3 {
+    font-family: var(--font-serif);
+    font-weight: 340;
+    font-variation-settings: "opsz" 60;
+    font-size: clamp(20px, 5.78vw, 24px);
+    line-height: 1.361;
+    letter-spacing: -0.012em;
+  }
+
+  @media (min-width: 768px) {
+    .type-h1 {
+      font-size: min(calc(15px + 3.12vw), 72px);
+    }
+
+    .type-h2 {
+      font-size: min(calc(15px + 2.28vw), 56px);
+    }
+
+    .type-h2-sm {
+      font-size: min(calc(12.3px + 1.87vw), 46px);
+    }
+
+    .type-h3 {
+      font-size: min(calc(15px + 0.84vw), 31px);
+    }
+  }
+
+  .type-body {
+    font-size: 16.08px;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  @media (min-width: 768px) {
+    .type-body {
+      font-size: min(calc(14.98px + 0.1213vw), 18px);
+    }
+  }
+
+  .type-small {
+    font-size: 14.47px;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  @media (min-width: 768px) {
+    .type-small {
+      font-size: min(calc(14.1px + 0.067vw), 16px);
+    }
+  }
+
+  .type-eyebrow {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.8;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .type-button {
+    font-size: 13.4px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 768px) {
+    .type-button {
+      font-size: 12.75px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .type-button {
+      font-size: 12.4px;
+    }
+  }
+
+  .script-word {
+    font-family: var(--font-script);
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.145em;
+    line-height: 0.7;
+    letter-spacing: 0;
+    color: var(--accent);
+    padding: 0 0.04em;
+  }
+  /* Section padding scales with the larger viewport side, like the source. */
+  .pad-sm {
+    padding-block: 4.5vmax;
+  }
+  .pad-md {
+    padding-block: 6.6vmax;
+  }
+  .pad-intro {
+    padding-block: 7vmax;
+  }
+  .pad-lg {
+    padding-block: 8vmax;
+  }
+  .pad-xs {
+    padding-block: 0.5vmax;
+  }
+}
